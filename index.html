@@ -1,0 +1,111 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Find-a-Word</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy for Find-a-Word</h1>
+        <p><strong>Last Updated: May 20, 2025</strong></p>
+        <p>Welcome to Find-a-Word, a mobile game developed by Lomelia Games ("we," "us," or "our"). This Privacy Policy explains how we handle information when you play Find-a-Word. By using our game, you agree to the practices described in this policy.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>We collect the following information:</p>
+        <ul>
+            <li><strong>High Score Time:</strong> We store your high score time locally on your device to track your best performance. This data is not personally identifiable and is not shared with any external parties.</li>
+        </ul>
+        <p>We do not collect any other personal information (e.g., name, email, device info, or location data) unless you voluntarily provide it to us (e.g., through a support request).</p>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>We use the high score time to:</p>
+        <ul>
+            <li>Display your best performance within the game.</li>
+        </ul>
+
+        <h2>3. Third-Party Services</h2>
+        <p>We do not use any third-party services that collect or process your data.</p>
+
+        <h2>4. Data Sharing</h2>
+        <p>We do not share any data, including your high score time, with third parties.</p>
+
+        <h2>5. Children's Privacy</h2>
+        <p>Find-a-Word is designed for everyone and is not specifically targeted at children under the age of 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected such information, we will delete it promptly.</p>
+
+        <h2>6. Data Security</h2>
+        <p>Your high score time is stored locally on your device, and we do not transmit it over the internet. As such, we do not implement additional security measures beyond local storage. However, no method of data storage is 100% secure, and we cannot guarantee absolute security.</p>
+
+        <h2>7. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of changes by updating the "Last Updated" date at the top of this page. Your continued use of Find-a-Word after changes constitutes acceptance of the updated policy.</p>
+
+        <h2>8. Contact Us</h2>
+        <p>If you have questions about this Privacy Policy, please contact us at:</p>
+        <p>Email: christopher_james_@outlook.com</p>
+        <p>Name: Chris</p>
+        <p>Developer: Lomelia Games</p>
+    </div>
+</body>
+</html>
